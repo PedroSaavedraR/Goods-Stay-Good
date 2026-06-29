@@ -1,40 +1,97 @@
-(define (domain room-temperature)
+(define (domain cargo)
 
 (:requirements :strips)
 
 (:predicates
-    (hot)
-    (cold)
-    (normal)
+    ;; Temperature
+    (high-temp)
+    (low-temp)
+    (normal-temp)
+
+    ;; Sensors
+    (vibration-detected)
+    (load-shifted)
+
+    ;; Actuators
     (cooler-on)
     (heater-on)
+    (brakes-applied)
+
+    ;; Notification
+    (alert-sent)
 )
 
+;;Actions temperature based
 
 (:action turn-on-cooler
-    :precondition (hot)
+
+    :precondition (high-temp)
+
     :effect (cooler-on)
 )
 
-(:action cool-room
-    :precondition (and (hot) (cooler-on))
+(:action cool-cargo
+
+    :precondition (and (high-temp) (cooler-on))
+
     :effect (and
-        (normal)
-        (not (hot))
+        (normal-temp)
+        (not (high-temp))
     )
+)
+
+(:action turn-off-cooler
+
+    :precondition (and (normal-temp) (cooler-on))
+
+    :effect (not (cooler-on))
 )
 
 (:action turn-on-heater
-    :precondition (cold)
+
+    :precondition (low-temp)
+
     :effect (heater-on)
 )
 
-(:action heat-room
-    :precondition (and (cold) (heater-on))
+(:action heat-cargo
+
+    :precondition (and (low-temp) (heater-on))
+
     :effect (and
-        (normal)
-        (not (cold))
+        (normal-temp)
+        (not (low-temp))
     )
 )
+
+(:action turn-off-heater
+
+    :precondition (and (normal-temp) (heater-on))
+
+    :effect (not (heater-on))
+)
+;;actions safety based
+
+(:action apply-brakes
+
+    :precondition (vibration-detected)
+
+    :effect (brakes-applied)
+)
+
+(:action apply-brakes-load
+
+    :precondition (load-shifted)
+
+    :effect (brakes-applied)
+)
+
+(:action send-alert
+
+    :precondition (brakes-applied)
+
+    :effect (alert-sent)
+)
+
 
 )
