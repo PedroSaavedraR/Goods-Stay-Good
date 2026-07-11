@@ -1,25 +1,75 @@
 import time
 
-from sensor_reader import get_sensor_snapshot
+from logger import reset
+from sensor_reader import get_observation
+from world_state import world
 from planner import create_plan
-from executor import execute
+from executor import execute, initialize_hardware
+from button import check_button
 
+
+
+# -----------------------------
+# Startup
+# -----------------------------
+
+reset()
+
+initialize_hardware()
+
+print("=== Smart Truck Controller Started ===")
+
+
+# -----------------------------
+# Main control loop
+# -----------------------------
 
 while True:
 
-    sensors = get_sensor_snapshot()
 
-    print("\n--- SENSOR DATA ---")
-    print(sensors)
+    # Check physical acknowledgement button
+
+    check_button()
 
 
-    plan = create_plan(sensors)
+
+    # Read sensors
+
+    observation = get_observation()
+
+
+    print("\n--- OBSERVATION ---")
+    print(observation)
+
+
+
+    # Update symbolic world
+
+    world.update(
+        observation
+    )
+
+
+    print("\n--- WORLD STATE ---")
+    print(world)
+
+
+
+    # Ask planner what should happen
+
+    plan = create_plan()
+
+
 
     print("\n--- PLAN ---")
     print(plan)
 
 
+
+    # Execute actions
+
     execute(plan)
+
 
 
     time.sleep(5)

@@ -3,7 +3,7 @@
 __pycache__/
 *.pyc
 
-# Docker runtime data (IMPORTANT for you)
+# Docker runtime data
 zwave-stack/store/
 store/
 
@@ -14,4 +14,10 @@ store/
 
 # OS
 .DS_Store
-sas_plan
+
+# External tools
+fast-downward/
+
+# Generated planner files
+planner/problem.pddl
+planner/generated_plan.txt

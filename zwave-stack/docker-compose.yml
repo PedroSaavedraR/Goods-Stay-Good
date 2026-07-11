@@ -4,8 +4,6 @@ services:
     container_name: zwave-js-ui
     restart: unless-stopped
 
-    network_mode: host
-
     tty: true
     stop_signal: SIGINT
 
@@ -20,4 +18,3 @@ services:
 
     ports:
       - "8091:8091"
-      - "3000:3000"
