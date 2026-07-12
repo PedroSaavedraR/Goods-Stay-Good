@@ -1,80 +1,80 @@
-import os
+from pathlib import Path
 
-# -------------------------
-# 1. SIMULATED SENSOR INPUT
-# -------------------------
-temperature = 14  # change this to test
 
-# -------------------------
-# 2. SELECT PROBLEM FILE
-# -------------------------
-if temperature > 30:
-    problem_file = "Problem1_Hot.pddl"
-elif temperature < 18:
-    problem_file = "Problem2_Cold.pddl"
-else:
-    problem_file = None
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-domain_file = "domain.pddl"
 
-print(f"[INFO] Using domain: {domain_file}")
-print(f"[INFO] Using problem: {problem_file}")
+DOMAIN = PROJECT_ROOT / "planner" / "domain.pddl"
 
-# -------------------------
-# 3. "PLANNER" (SIMULATION)
-# -------------------------
-# Since Fast Downward is not installed yet,
-# we simulate the plan based on problem file name
+PROBLEM = PROJECT_ROOT / "planner" / "problem.pddl"
 
-if problem_file == "Problem1_Hot.pddl":
-    # ideally plan would be calculated by a planner like Fast downward. Here we are just 
-    plan = [
-        "turn-on-cooler",
-        "cool-room"
-    ]
 
-elif problem_file == "Problem2_Cold.pddl":
-    plan = [
-        "turn-on-heater",
-        "heat-room"
-    ]
 
-else:
-    plan = []
+def create_problem(world):
 
-# Save plan like a real planner would
-with open("sas_plan", "w") as f:
-    for action in plan:
-        f.write(action + "\n")
 
-print("[INFO] Plan generated")
+    symbols = world.symbols()
 
-# -------------------------
-# 4. READ PLAN
-# -------------------------
-if os.path.exists("sas_plan"):
-    with open("sas_plan", "r") as f:
-        actions = [line.strip() for line in f.readlines()]
-else:
-    actions = []
 
-# -------------------------
-# 5. EXECUTE PLAN
-# -------------------------
-print("\n--- EXECUTING PLAN ---")
 
-for action in actions:
+    facts = []
 
-    if action == "turn-on-cooler":
-        print("Cooling system ON")
 
-    elif action == "cool-room":
-        print("Room cooled → NORMAL")
+    for symbol in symbols:
 
-    elif action == "turn-on-heater":
-        print("Heating system ON")
+        facts.append(
+            f"({symbol})"
+        )
 
-    elif action == "heat-room":
-        print("Room heated → NORMAL")
 
-print("\n[DONE]")
+
+    goal = """
+
+        (and
+
+            (rear_clear)
+
+            (cargo_checked)
+
+            (temperature_ok)
+
+            (humidity_ok)
+
+        )
+
+    """
+
+
+
+    content = f"""
+
+(define (problem truck_problem)
+
+    (:domain smart-truck)
+
+
+    (:init
+
+        {' '.join(facts)}
+
+    )
+
+
+    (:goal
+
+        {goal}
+
+    )
+
+)
+
+"""
+
+
+    PROBLEM.write_text(
+        content
+    )
+
+
+
+    return PROBLEM

@@ -1,47 +1,23 @@
+import logging
 from pathlib import Path
-from datetime import datetime
 
 
-LOG_FILE = (
-    Path(__file__).parent.parent
-    / "log"
-    / "events.log"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+LOG_DIR = PROJECT_ROOT / "log"
+LOG_DIR.mkdir(exist_ok=True)
+
+LOG_FILE = LOG_DIR / "events.log"
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
 )
 
 
-def reset():
-
-    LOG_FILE.parent.mkdir(
-        exist_ok=True
-    )
-
-
-    LOG_FILE.write_text(
-        "=== Smart Truck Log Started ===\n"
-    )
-
-
-
-def log(message):
-
-    LOG_FILE.parent.mkdir(
-        exist_ok=True
-    )
-
-
-    timestamp = datetime.now().isoformat(
-        timespec="seconds"
-    )
-
-
-    line = (
-        f"{timestamp} | {message}\n"
-    )
-
-
-    with LOG_FILE.open("a") as file:
-
-        file.write(line)
-
-
-    print(f"[LOG] {message}")
+log = logging.getLogger("smart-truck")

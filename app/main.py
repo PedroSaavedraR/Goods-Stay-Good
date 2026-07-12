@@ -1,75 +1,80 @@
 import time
 
-from logger import reset
-from sensor_reader import get_observation
+
 from world_state import world
-from planner import create_plan
-from executor import execute, initialize_hardware
-from button import check_button
+
+from sensor_reader import read
+
+from planner_bridge import create_plan
+
+from executor import Executor
+
+from logger import log
 
 
-
-# -----------------------------
-# Startup
-# -----------------------------
-
-reset()
-
-initialize_hardware()
-
-print("=== Smart Truck Controller Started ===")
+executor = Executor()
+last_planned_version = -1
 
 
-# -----------------------------
-# Main control loop
-# -----------------------------
+def main():
 
-while True:
-
-
-    # Check physical acknowledgement button
-
-    check_button()
-
-
-
-    # Read sensors
-
-    observation = get_observation()
-
-
-    print("\n--- OBSERVATION ---")
-    print(observation)
-
-
-
-    # Update symbolic world
-
-    world.update(
-        observation
+    log.info(
+        "Smart truck starting"
     )
 
 
-    print("\n--- WORLD STATE ---")
-    print(world)
+    while True:
+
+
+        observation = read()
+
+
+        world.update(
+            observation
+        )
+
+
+        # only create a new plan
+        # when required
+
+        if (
+            world.needs_replan(last_planned_version)
+            or not executor.plan
+        ):
+
+            plan = create_plan(
+                world
+            )
+
+            executor.set_plan(
+                plan
+            )
+
+            last_planned_version = world.version
 
 
 
-    # Ask planner what should happen
+        # one action only
 
-    plan = create_plan()
+        if executor.plan:
 
+            executor.execute_next(
+                world
+            )
 
-
-    print("\n--- PLAN ---")
-    print(plan)
-
-
-
-    # Execute actions
-
-    execute(plan)
+        time.sleep(
+            0.5
+        )
 
 
 
-    time.sleep(5)
+if __name__ == "__main__":
+
+    main()
+        )
+
+
+
+if __name__ == "__main__":
+
+    main()

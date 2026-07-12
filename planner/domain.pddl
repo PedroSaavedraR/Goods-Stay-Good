@@ -1,97 +1,143 @@
-(define (domain cargo)
+(define (domain smart-truck)
 
-(:requirements :strips)
-
-(:predicates
-    ;; Temperature
-    (high-temp)
-    (low-temp)
-    (normal-temp)
-
-    ;; Sensors
-    (vibration-detected)
-    (load-shifted)
-
-    ;; Actuators
-    (cooler-on)
-    (heater-on)
-    (brakes-applied)
-
-    ;; Notification
-    (alert-sent)
-)
-
-;;Actions temperature based
-
-(:action turn-on-cooler
-
-    :precondition (high-temp)
-
-    :effect (cooler-on)
-)
-
-(:action cool-cargo
-
-    :precondition (and (high-temp) (cooler-on))
-
-    :effect (and
-        (normal-temp)
-        (not (high-temp))
+    (:requirements
+        :strips
     )
-)
 
-(:action turn-off-cooler
 
-    :precondition (and (normal-temp) (cooler-on))
+    (:predicates
 
-    :effect (not (cooler-on))
-)
+        (temperature_ok)
+        (temperature_hot)
+        (temperature_cold)
 
-(:action turn-on-heater
+        (humidity_ok)
+        (humidity_high)
+        (humidity_low)
 
-    :precondition (low-temp)
+        (cargo_checked)
+        (cargo_unchecked)
 
-    :effect (heater-on)
-)
+        (rear_clear)
 
-(:action heat-cargo
+        (driving_lights_on)
+        (bright_enough)
 
-    :precondition (and (low-temp) (heater-on))
+        (fan_on)
+        (heater_on)
 
-    :effect (and
-        (normal-temp)
-        (not (low-temp))
     )
-)
 
-(:action turn-off-heater
 
-    :precondition (and (normal-temp) (heater-on))
+    ;
+    ; Cooling
+    ;
 
-    :effect (not (heater-on))
-)
-;;actions safety based
+    (:action fan_on
 
-(:action apply-brakes
+        :precondition
+            (temperature_hot)
 
-    :precondition (vibration-detected)
+        :effect
+            (and
+                (fan_on)
+            )
+    )
 
-    :effect (brakes-applied)
-)
 
-(:action apply-brakes-load
+    (:action fan_off
 
-    :precondition (load-shifted)
+        :precondition
+            (temperature_ok)
 
-    :effect (brakes-applied)
-)
+        :effect
+            (and
+                (not (fan_on))
+            )
+    )
 
-(:action send-alert
 
-    :precondition (brakes-applied)
 
-    :effect (alert-sent)
-)
+    ;
+    ; Heating
+    ;
 
+    (:action heater_on
+
+        :precondition
+            (temperature_cold)
+
+        :effect
+            (and
+                (heater_on)
+            )
+    )
+
+
+
+    (:action heater_off
+
+        :precondition
+            (temperature_ok)
+
+        :effect
+            (and
+                (not (heater_on))
+            )
+    )
+
+
+
+    ;
+    ; Humidity control
+    ;
+
+    (:action humidity_fan_on
+
+        :precondition
+            (or
+                (humidity_high)
+                (humidity_low)
+            )
+
+        :effect
+            (fan_on)
+
+    )
+
+
+
+    ;
+    ; Cargo
+    ;
+
+    (:action check_cargo
+
+        :precondition
+            (cargo_unchecked)
+
+        :effect
+            (and
+                (cargo_checked)
+                (not (cargo_unchecked))
+            )
+    )
+
+
+
+    ;
+    ; Driving lights
+    ;
+
+    (:action turn_lights_on
+
+        :precondition
+            (not
+                (bright_enough)
+            )
+
+        :effect
+            (driving_lights_on)
+    )
 
 )

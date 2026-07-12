@@ -1,113 +1,93 @@
-from hardware.relay import relay_on, relay_off
+from logger import log
 
-from world_state import world
-
-
-def execute(plan):
-
-    print("\n--- EXECUTING PLAN ---")
+from hardware import relay
+from hardware import lights
 
 
-    for action in plan:
+class Executor:
 
 
-        if action == "turn-on-fan":
+    def __init__(self):
 
-            if not world.fan_on:
-
-                print("Fan ON")
-
-                relay_on(1)
-
-                world.set_fan(True)
+        self.plan = []
 
 
+    def set_plan(self, plan):
 
-        elif action == "turn-off-fan":
+        self.plan = plan
 
-            if world.fan_on:
-
-                print("Fan OFF")
-
-                relay_off(1)
-
-                world.set_fan(False)
+        log.info(
+            "New plan: %s",
+            plan
+        )
 
 
 
-        elif action == "turn-on-heater":
+    def execute_next(self, world):
 
-            if not world.heater_on:
-
-                print("Heater ON")
-
-                relay_on(2)
-
-                world.set_heater(True)
+        if not self.plan:
+            return
 
 
-
-        elif action == "turn-off-heater":
-
-            if world.heater_on:
-
-                print("Heater OFF")
-
-                relay_off(2)
-
-                world.set_heater(False)
+        action = self.plan.pop(0)
 
 
+        log.info(
+            "Executing %s",
+            action
+        )
 
-        elif action == "turn-on-warning":
 
-            if not world.warning_on:
+        if action == "fan_on":
 
-                print("Warning light ON")
+            relay.fan_on()
 
-                relay_on(3)
-
-                world.set_warning(True)
+            world.fan_on = True
 
 
 
-        elif action == "turn-off-warning":
+        elif action == "fan_off":
 
-            if world.warning_on:
+            relay.fan_off()
 
-                print("Warning light OFF")
-
-                relay_off(3)
-
-                world.set_warning(False)
+            world.fan_on = False
 
 
 
-        else:
+        elif action == "heater_on":
 
-            print(
-                f"Unknown action: {action}"
-            )
+            relay.heater_on()
 
-
-    print("--- DONE ---")
-
-def initialize_hardware():
-
-    print("\n--- INITIALIZING HARDWARE ---")
-
-    # Force safe startup state
-
-    relay_off(1)
-    relay_off(2)
-    relay_off(3)
+            world.heater_on = True
 
 
-    world.set_fan(False)
 
-    world.set_heater(False)
+        elif action == "heater_off":
 
-    world.set_warning(False)
+            relay.heater_off()
+
+            world.heater_on = False
 
 
-    print("--- HARDWARE READY ---")
+        elif action == "driving_lights_on":
+
+            lights.driving_lights_on()
+
+            world.driving_lights_on = True
+
+
+
+        elif action == "driving_lights_off":
+
+            lights.driving_lights_off()
+
+            world.driving_lights_on = False
+
+
+        elif action == "check_cargo":
+
+            world.acknowledge_cargo()
+
+
+
+
