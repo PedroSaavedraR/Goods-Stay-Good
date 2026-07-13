@@ -13,14 +13,11 @@ PROBLEM = PROJECT_ROOT / "planner" / "problem.pddl"
 def create_problem(world):
 
 
-    symbols = world.symbols()
-
-
-
+    predicates = world.predicates()
     facts = []
 
 
-    for symbol in symbols:
+    for symbol in predicates:
 
         facts.append(
             f"({symbol})"
@@ -32,7 +29,7 @@ def create_problem(world):
 
         (and
 
-            (rear_clear)
+            (drive_safe)
 
             (cargo_checked)
 
@@ -78,3 +75,5 @@ def create_problem(world):
 
 
     return PROBLEM
+
+

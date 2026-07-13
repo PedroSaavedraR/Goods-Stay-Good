@@ -1,8 +1,17 @@
+For continuing work:
+- plug all things in.
+- both PC and pi in same network (hotspot)
+- ssh
+- start docker container
+- run app/main.py
+
 install pi OS light (due to disk size constraint)
 setup wifi (same network as computer)
 setup ssh access (ssh into pi from computer)
 
-usage: ssh pi@raspberrypi.local
+usage:
+ssh pi@raspberrypi.local
+12345678
 
 on Pi:
 ➜  ~ ssh-keygen -t ed25519 -C "jelitaw-pi"

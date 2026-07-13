@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass(frozen=True)
 class Config:
     #
@@ -46,6 +45,8 @@ class Config:
     #
 
     timezone: str = "Europe/Berlin"
+    sunset_lat: float = 51.0
+    sunset_lng: float = 10.0
 
     #
     # I²C relay board
@@ -53,6 +54,5 @@ class Config:
 
     i2c_address: int = 0x20
     relay_count: int = 4
-
 
 CONFIG = Config()
