@@ -1,0 +1,14 @@
+services:
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    container_name: zwave-js-ui
+    restart: unless-stopped
+
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+
+    ports:
+      - "8091:8091"
+
+    environment:
+      - TZ=Europe/Berlin"

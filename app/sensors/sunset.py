@@ -29,7 +29,7 @@ class SunsetChecker:
     def _refetch(self):
         """Fetch today's sunset/sunrise times from the API."""
         try:
-            req = urllib.request.Request(SUNSET_URL)
+            req = urllib.request.Request(SUNSET_URL, headers={"User-Agent": "Goods-Stay-Good/1.0"})
             with urllib.request.urlopen(req, timeout=5) as resp:
                 data = json.loads(resp.read().decode())
             if data.get("status") != "OK":

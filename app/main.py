@@ -14,6 +14,8 @@ last_planned_version = -1
 
 
 def main():
+    global last_planned_version
+
     log.info("Smart truck starting")
 
     while True:
@@ -22,11 +24,16 @@ def main():
             snapshot = read()
             world.apply(snapshot)
 
-            # 2. Replan if world changed or no plan exists
-            if world.needs_replan(last_planned_version) or not executor.plan:
+            # 2. Replan if world changed or no plan exists (but only when world actually changed)
+            if world.needs_replan(last_planned_version) or (
+                not executor.plan and world.version != last_planned_version
+            ):
+                log.info("Predicates: %s", world.predicates())
                 plan = create_plan(world)
                 executor.set_plan(plan)
                 last_planned_version = world.version
+                if not plan:
+                    log.info("Plan empty — waiting for environment to change")
 
             # 3. Execute one action per tick
             if executor.plan:

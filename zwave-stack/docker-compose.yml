@@ -4,17 +4,26 @@ services:
     container_name: zwave-js-ui
     restart: unless-stopped
 
+    # Needed for serial access
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+
+    # Clean shutdown
     tty: true
     stop_signal: SIGINT
 
     environment:
-      - TZ=Europe/Berlin
-
-    devices:
-      - /dev/serial/by-id/usb-0658_0200-if00:/dev/ttyACM0
+      TZ: Europe/Berlin
 
     volumes:
+      # Z-Wave database, config, keys, cache
       - ./store:/usr/src/app/store
+
+      # Optional application logs outside the store
+      - ./logs:/usr/src/app/logs
 
     ports:
       - "8091:8091"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

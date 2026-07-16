@@ -1,0 +1,25 @@
+Issue 2: MQTT motion sensor not updating
+The predicates show 
+cargo_checked
+ — meaning either no motion was detected, or the MQTT message never arrived. Let's debug what Z-Wave is actually publishing:
+
+Run
+# Subscribe to see all Z-Wave MQTT messages in real time
+mosquitto_sub -t "zwave/#" -v
+Then move in front of the PIR sensor. You should see something like:
+
+Run
+zwave/Motion_sensor_status {"value":true,"time":1750001234567}
+If you see nothing, the Z-Wave sensor might have fallen off the network (battery? range?). If you see messages but the format differs (e.g., the value is nested differently), the 
+update()
+ method in 
+mqtt.py
+ might not be matching the topic correctly.
+
+Also check if the MQTT topic format changed — 
+mqtt.py
+ expects "Air_temperature" in the topic and topic.endswith("/Humidity"). Let me see what topics are actually being published:
+
+Run
+mosquitto_sub -t "zwave/#" -v | head -20
+What do you see?

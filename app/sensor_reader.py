@@ -11,6 +11,9 @@ def read():
 
     motion_ts = data["motion_timestamp"]
     if motion_ts is not None:
+        # Z-Wave MQTT timestamps are in milliseconds (JS convention)
+        if motion_ts > 1e12:
+            motion_ts = motion_ts / 1000.0
         motion_datetime = datetime.utcfromtimestamp(motion_ts)
     else:
         motion_datetime = None

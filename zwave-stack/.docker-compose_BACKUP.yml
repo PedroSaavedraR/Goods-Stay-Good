@@ -1,0 +1,33 @@
+services:
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    container_name: zwave-js-ui
+    restart: unless-stopped
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    tty: true
+    stop_signal: SIGINT
+
+    environment:
+      - TZ=Europe/Berlin
+
+    devices:
+      #- /dev/serial/by-id/usb-0658_0200-if00:/dev/serial/by-id/usb-0658_0200-if00
+      - /dev/ttyACM0:/dev/ttyACM0
+
+    volumes:
+      # Persistent Z-Wave database and configuration
+      - ./store:/usr/src/app/store
+
+      # Optional: keep logs in RAM
+      - /tmp/zwave-logs:/usr/src/app/logs
+
+    tmpfs:
+      # Temporary files only
+      - /usr/src/app/store/logs
+      - /usr/src/app/store/backups
+
+    ports:
+      - "8091:8091"
