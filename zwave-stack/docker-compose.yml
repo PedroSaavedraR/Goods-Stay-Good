@@ -2,13 +2,12 @@ services:
   zwave-js-ui:
     image: zwavejs/zwave-js-ui:latest
     container_name: zwave-js-ui
-    restart: unless-stopped
+    # restart: unless-stopped
+    restart: no
 
-    # Needed for serial access
     devices:
       - /dev/ttyACM0:/dev/ttyACM0
 
-    # Clean shutdown
     tty: true
     stop_signal: SIGINT
 
@@ -16,14 +15,37 @@ services:
       TZ: Europe/Berlin
 
     volumes:
-      # Z-Wave database, config, keys, cache
       - ./store:/usr/src/app/store
-
-      # Optional application logs outside the store
       - ./logs:/usr/src/app/logs
 
     ports:
       - "8091:8091"
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mosquitto
+
+    networks:
+      - zwave-net
+
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    # restart: unless-stopped
+    restart: no
+
+    ports:
+      - "1883:1883"
+
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+    networks:
+      - zwave-net
+
+
+networks:
+  zwave-net:
+    external: true

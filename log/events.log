@@ -189,3 +189,5 @@
 2026-07-14 13:00:15,485 | INFO | Predicates: {'humidity_ok', 'cargo_checked', 'rear_clear', 'drive_safe', 'temperature_hot'}
 2026-07-14 13:00:16,209 | INFO | New plan: []
 2026-07-14 13:00:16,209 | INFO | Plan empty — waiting for environment to change
+2026-07-17 03:39:07,454 | INFO | MQTT connected to localhost
+2026-07-17 03:42:43,539 | INFO | MQTT connected to localhost
