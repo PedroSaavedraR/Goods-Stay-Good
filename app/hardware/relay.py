@@ -3,12 +3,9 @@ from smbus import SMBus
 from logger import log
 
 
-# -----------------------------
 # PCAL9535A
-# -----------------------------
 
 ADDRESS = 0x20
-
 
 CONFIG0 = 0x06
 CONFIG1 = 0x07
@@ -20,7 +17,7 @@ OUTPUT1 = 0x03
 bus = SMBus(1)
 
 
-# Configure both ports as output
+# Configure both ports as outputs
 
 bus.write_byte_data(
     ADDRESS,
@@ -35,31 +32,22 @@ bus.write_byte_data(
 )
 
 
-
-# -----------------------------
-# Relay mapping
-# -----------------------------
-
 #
-# Relay numbers:
+# Relay mapping:
 #
 # 1 -> cargo status LED
-# 2 -> buzzer
+# 2 -> driving lights
 # 3 -> fan
 # 4 -> heating lamp
 #
 
-
 OUTPUT_STATE = 0xFF
 
 
-
-def write(value):
-
+def _write(value):
     global OUTPUT_STATE
 
     OUTPUT_STATE = value
-
 
     bus.write_byte_data(
         ADDRESS,
@@ -68,32 +56,20 @@ def write(value):
     )
 
 
-
-def set_relay(number, enabled):
-
+def _set_relay(number, enabled):
     global OUTPUT_STATE
-
 
     bit = 1 << (number - 1)
 
-
     if enabled:
-
         # Relay board is active LOW
-
         OUTPUT_STATE &= ~bit
-
-
     else:
-
         OUTPUT_STATE |= bit
 
-
-
-    write(
+    _write(
         OUTPUT_STATE
     )
-
 
     log.info(
         "Relay %s -> %s",
@@ -102,74 +78,60 @@ def set_relay(number, enabled):
     )
 
 
-
-# -----------------------------
-# Public functions
-# -----------------------------
+# Public API
 
 
-def status_led_on():
-
-    set_relay(
+def cargo_led_on():
+    _set_relay(
         1,
         True
     )
 
 
-def status_led_off():
-
-    set_relay(
+def cargo_led_off():
+    _set_relay(
         1,
         False
     )
 
 
-
-def buzzer_on():
-
-    set_relay(
+def driving_lights_on():
+    _set_relay(
         2,
         True
     )
 
 
-def buzzer_off():
-
-    set_relay(
+def driving_lights_off():
+    _set_relay(
         2,
         False
     )
-
 
 
 def fan_on():
-
-    set_relay(
+    _set_relay(
         3,
         True
     )
 
 
 def fan_off():
-
-    set_relay(
+    _set_relay(
         3,
         False
     )
 
 
-
-def heater_on():
-
-    set_relay(
+def heating_lamp_on():
+    _set_relay(
         4,
         True
     )
 
 
-def heater_off():
-
-    set_relay(
+def heating_lamp_off():
+    _set_relay(
         4,
         False
     )

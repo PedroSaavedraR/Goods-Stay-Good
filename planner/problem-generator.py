@@ -1,54 +1,64 @@
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DOMAIN = "domain.pddl"
+OUTPUT = "problem.pddl"
 
-PROBLEM = PROJECT_ROOT / "planner" / "problem.pddl"
 
-
-def create_problem(world):
+def generate(
+    temperature,
+    fan_on,
+    heater_on,
+):
 
     facts = []
 
-    for predicate in sorted(world.predicates()):
-        facts.append(
-            f"({predicate})"
-        )
+
+    if fan_on:
+        facts.append("(fan_on)")
+
+    if heater_on:
+        facts.append("(heater_on)")
 
 
-    content = f"""
-(define (problem smart-truck-problem)
+    if temperature == "HOT":
+        facts.append("(temperature_hot)")
 
-    (:domain smart-truck)
+    elif temperature == "COLD":
+        facts.append("(temperature_cold)")
 
+    else:
+        facts.append("(temperature_ok)")
+
+
+    problem = f"""
+(define (problem heating-problem)
+
+    (:domain heating-cooling)
 
     (:init
-
         {' '.join(facts)}
-
     )
 
 
     (:goal
-
         (and
-
-            (cargo_stable)
-
             (temperature_ok)
-
-            (humidity_ok)
-
-            (drive_safe)
-
+            (not(heater_on))
+            (not(fan_on))
         )
-
     )
-
 )
 """
 
 
-    PROBLEM.write_text(content)
+    Path(OUTPUT).write_text(problem)
 
-    return PROBLEM
+
+if __name__ == "__main__":
+
+    generate(
+        temperature="HOT",
+        fan_on=False,
+        heater_on=False,
+    )

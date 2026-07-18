@@ -1,125 +1,36 @@
-import sys
-from pathlib import Path
-# Ensure project root is on sys.path so 'import planner.main' works
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_ROOT))
-
 import subprocess
 
 
-from planner.main import create_problem
+def create_plan():
 
-
-FAST_DOWNWARD = (
-    PROJECT_ROOT
-    /
-    "fast-downward"
-    /
-    "fast-downward.py"
-)
-
-
-
-DOMAIN = (
-    PROJECT_ROOT
-    /
-    "planner"
-    /
-    "domain.pddl"
-)
-
-
-
-
-def create_plan(world):
-
-
-    problem = create_problem(
-        world
-    )
-
-
-
-    result = subprocess.run(
-
+    subprocess.run(
         [
-
-            "python3",
-
-            str(FAST_DOWNWARD),
-
-            str(DOMAIN),
-
-            str(problem),
-
+            "./fast-downward.py",
+            "domain.pddl",
+            "problem.pddl",
             "--search",
-
-            "astar(lmcut)"
-
+            "astar(lmcut())"
         ],
-
-        capture_output=True,
-
-        text=True
-
+        cwd="../fast-downward"
     )
 
 
+    with open(
+        "../fast-downward/plan"
+    ) as f:
 
-    if result.returncode != 0:
+        for line in f:
 
-        print(
-            result.stderr
-        )
-
-        return []
-
-
-
-    actions = []
-
-
-
-    reading = False
-
-
-
-    for line in result.stdout.splitlines():
-
-
-        if "Plan:" in line:
-
-            reading = True
-
-            continue
-
-
-
-        if reading:
-
-
-            line = line.strip()
-
-
-            if not line:
-
+            if line.startswith(";"):
                 continue
 
+            return line.strip().replace(
+                ")",
+                ""
+            ).replace(
+                "(",
+                ""
+            )
 
 
-            if line[0].isdigit():
-
-                action = (
-                    line
-                    .split(":")[1]
-                    .strip()
-                )
-
-
-                actions.append(
-                    action.strip("()")
-                )
-
-
-
-    return actions
+    return None

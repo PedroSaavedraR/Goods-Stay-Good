@@ -4,9 +4,6 @@ import time
 
 import paho.mqtt.client as mqtt
 
-from logger import log
-
-
 BROKER = "localhost"
 TOPIC = "zwave/#"
 
@@ -47,7 +44,6 @@ class MQTTState:
             elif "Motion_sensor_status" in topic:
                 self.motion = bool(value)
                 self.motion_timestamp = timestamp
-                log.info("Motion update: %s", self.motion)
 
 
 mqtt_state = MQTTState()
@@ -58,7 +54,6 @@ mqtt_state = MQTTState()
 # -----------------------------
 
 def on_connect(client, userdata, flags, reason_code, properties=None):
-    log.info("MQTT connected to %s", BROKER)
     client.subscribe(TOPIC)
 
 

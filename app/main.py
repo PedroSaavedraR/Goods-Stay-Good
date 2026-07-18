@@ -1,67 +1,38 @@
 import time
-import traceback
 
-from world_state import world
-from sensor_reader import read
+from sensors.sensor_reader import read
+from world_state.world_state import WorldState
+
 from planner_bridge import create_plan
-from executor import Executor
-from hardware import apply as hardware_apply
-from logger import log
+from executor import execute
 
-executor = Executor()
 
 def main():
-    log.info("Smart truck starting")
+
+    world = WorldState()
+
 
     while True:
-        try:
-            # =====================================
-            # 1. SENSOR UPDATE
-            # =====================================
-            snapshot = read()
 
-            world.apply(snapshot)
+        sensors = read()
 
-            log.info(
-                "World: %s",
-                world.predicates()
-            )
+        world.update_from_sensors(
+            sensors
+        )
 
-            # =====================================
-            # 2. ALWAYS PLAN
-            # =====================================
 
-            plan = create_plan(world)
+        create_plan()
 
-            log.info(
-                "New plan: %s",
-                plan
-            )
 
-            executor.set_plan(plan)
+        action = create_plan()
 
-            # =====================================
-            # 3. EXECUTE ONE ACTION
-            # =====================================
 
-            if executor.plan:
-                executor.execute_next(world)
+        if action:
+            execute(action)
 
-            # =====================================
-            # 4. HARDWARE MIRROR
-            # =====================================
 
-            hardware_apply(world)
-
-        except Exception as exc:
-            log.error(
-                "Main loop error: %s",
-                exc
-            )
-            log.debug(
-                traceback.format_exc()
-            )
         time.sleep(0.5)
+
 
 
 if __name__ == "__main__":

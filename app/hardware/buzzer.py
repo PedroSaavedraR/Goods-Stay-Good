@@ -4,11 +4,10 @@ from logger import log
 
 
 PIN = 4
+FREQUENCY = 500  # Hz
 
 
-GPIO.setmode(
-    GPIO.BCM
-)
+GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(
     PIN,
@@ -18,27 +17,19 @@ GPIO.setup(
 
 _pwm = GPIO.PWM(
     PIN,
-    500
+    FREQUENCY
 )
 
 
-
-def start():
-
-    log.info(
-        "Buzzer ON"
-    )
+def on():
+    log.info("Buzzer ON")
 
     _pwm.start(
-        50
+        50  # duty cycle %
     )
 
 
-
-def stop():
-
-    log.info(
-        "Buzzer OFF"
-    )
+def off():
+    log.info("Buzzer OFF")
 
     _pwm.stop()

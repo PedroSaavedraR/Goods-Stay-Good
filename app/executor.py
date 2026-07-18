@@ -1,56 +1,34 @@
-from logger import log
+from hardware import hardware_manager as hardware
 
 
-class Executor:
+def execute(action):
 
-    def __init__(self):
-        self.plan: list[str] = []
+    if action == "turn_fan_on":
+        hardware.fan_on()
+        world.fan_enabled()
 
-    def set_plan(self, plan: list[str]):
-        self.plan = list(plan)
-        log.info("New plan: %s", self.plan)
+    elif action == "turn_fan_off":
+        hardware.fan_off()
+        world.fan_disabled()
 
-    def execute_next(self, world):
-        if not self.plan:
-            return
+    elif action == "turn_heater_on":
+        hardware.heating_lamp_on()
+        world.heater_enabled()
 
-        action = self.plan.pop(0)
-        log.info("Executing %s", action)
+    elif action == "turn_heater_off":
+        hardware.heating_lamp_off()
+        world.heater_disabled()
 
-        if action == "fan_on":
-            world.fan_on = True
+    elif action in (
+        "cool_down",
+        "heat_up"
+    ):
+        # Environment changes.
+        # Nothing to trigger.
+        pass
 
-        elif action == "fan_off":
-            world.fan_on = False
 
-        elif action == "heater_on":
-            world.heater_on = True
-
-        elif action == "heater_off":
-            world.heater_on = False
-
-        elif action == "turn_lights_on":
-            world.driving_lights_on = True
-
-        elif action == "turn_lights_off":
-            world.driving_lights_on = False
-
-        elif action == "check_cargo":
-            world.acknowledge_cargo()
-
-        elif action == "buzzer_on":
-            world.buzzer_on = True
-
-        elif action == "buzzer_off":
-            world.buzzer_on = False
-
-        elif action == "status_led_on":
-            world.status_led_on = True
-
-        elif action == "status_led_off":
-            world.status_led_on = False
-
-        else:
-            log.warning("Unknown action: %s", action)
-
-        world.version += 1
+    else:
+        raise ValueError(
+            f"Unknown action: {action}"
+        )
