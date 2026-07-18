@@ -5,7 +5,6 @@ sys.path.append(
     str(Path(__file__).resolve().parent.parent)
 )
 
-
 import time
 
 from sensors.sensor_reader import read
@@ -16,6 +15,16 @@ from planner_bridge import plan
 from executor import execute
 from hardware import hardware_manager as hardware
 
+
+def shutdown():
+    print("\nShutting down: disabling all actuators...")
+
+    hardware.fan_off()
+    hardware.heating_lamp_off()
+
+    print("All actuators disabled.")
+
+
 def main():
 
     world = WorldState()
@@ -24,26 +33,33 @@ def main():
     hardware.fan_off()
     hardware.heating_lamp_off()
 
-    while True:
+    try:
+        while True:
 
-        sensors = read()
+            sensors = read()
 
-        world.update_from_sensors(
-            sensors
-        )
+            world.update_from_sensors(
+                sensors
+            )
 
-        # Create fresh problem.pddl from current world state
-        generate(world)
+            # Create fresh problem.pddl from current world state
+            generate(world)
 
-        # Run planner and get next action
-        action = plan()
+            # Run planner and get next action
+            action = plan()
 
-        print("ACTION FROM PLANNER:", repr(action))
+            print("ACTION FROM PLANNER:", repr(action))
 
-        if action:
-            execute(action, world)
+            if action:
+                execute(action, world)
 
-        time.sleep(0.5)
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("\nCTRL+C received.")
+
+    finally:
+        shutdown()
 
 
 if __name__ == "__main__":

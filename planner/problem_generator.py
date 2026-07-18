@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from world_state.world_state import Temperature
+from world_state.world_state import Temperature, AirQuality
 
 
 OUTPUT = Path(__file__).parent / "problem.pddl"
@@ -10,11 +10,16 @@ def generate(world):
 
     facts = []
 
+    # Actuator state
+
     if world.fan_on:
         facts.append("(fan_on)")
 
     if world.heater_on:
         facts.append("(heater_on)")
+
+
+    # Temperature state
 
     if world.temperature == Temperature.HOT:
         facts.append("(temperature_hot)")
@@ -26,8 +31,14 @@ def generate(world):
         facts.append("(temperature_ok)")
 
 
+    # Air quality state
+
+    if world.air_quality == AirQuality.BAD:
+        facts.append("(bad_air)")
+
+
     problem = f"""
-(define (problem heating-problem)
+(define (problem smart-truck)
 
     (:domain heating-cooling)
 
@@ -40,6 +51,7 @@ def generate(world):
             (temperature_ok)
             (not (heater_on))
             (not (fan_on))
+            (not (bad_air))
         )
     )
 )

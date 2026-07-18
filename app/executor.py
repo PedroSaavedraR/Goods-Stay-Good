@@ -3,7 +3,7 @@ from hardware import hardware_manager as hardware
 
 def execute(action, world):
 
-    if action == "turn_fan_on":
+    if action in ("turn_fan_on_temperature", "turn_fan_on_air",):
         hardware.fan_on()
         world.fan_enabled()
 
@@ -21,7 +21,8 @@ def execute(action, world):
 
     elif action in (
         "cool_down",
-        "heat_up"
+        "heat_up",
+        "clean_air"
     ):
         # Environment changes.
         # Nothing to trigger.

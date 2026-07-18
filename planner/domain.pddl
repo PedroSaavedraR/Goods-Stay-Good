@@ -13,10 +13,16 @@
         (temperature_hot)
         (temperature_ok)
         (temperature_cold)
+
+        (bad_air)
     )
 
 
-    (:action turn_fan_on
+    ; -------------------------
+    ; Fan control
+    ; -------------------------
+
+    (:action turn_fan_on_temperature
         :precondition
             (and
                 (temperature_hot)
@@ -24,9 +30,19 @@
             )
 
         :effect
+            (fan_on)
+    )
+
+
+    (:action turn_fan_on_air
+        :precondition
             (and
-                (fan_on)
+                (bad_air)
+                (not (fan_on))
             )
+
+        :effect
+            (fan_on)
     )
 
 
@@ -45,19 +61,34 @@
     )
 
 
-    (:action turn_fan_off
+    (:action clean_air
         :precondition
             (and
-                (temperature_ok)
+                (bad_air)
                 (fan_on)
             )
 
         :effect
-            (and
-                (not (fan_on))
-            )
+            (not (bad_air))
     )
 
+
+    (:action turn_fan_off
+        :precondition
+            (and
+                (temperature_ok)
+                (not (bad_air))
+                (fan_on)
+            )
+
+        :effect
+            (not (fan_on))
+    )
+
+
+    ; -------------------------
+    ; Heater control
+    ; -------------------------
 
     (:action turn_heater_on
         :precondition
@@ -67,9 +98,7 @@
             )
 
         :effect
-            (and
-                (heater_on)
-            )
+            (heater_on)
     )
 
 
@@ -96,8 +125,7 @@
             )
 
         :effect
-            (and
-                (not (heater_on))
-            )
+            (not (heater_on))
     )
+
 )

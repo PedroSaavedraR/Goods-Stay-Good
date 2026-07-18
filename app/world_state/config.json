@@ -1,6 +1,10 @@
 {
     "temperature": {
-        "cold_limit": 30.0,
-        "hot_limit": 37.0
+        "cold_limit": 27.5,
+        "hot_limit": 50
+    },
+    "humidity": {
+        "low_limit": 20,
+        "high_limit": 23
     }
 }

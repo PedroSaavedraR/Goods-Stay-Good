@@ -7,7 +7,10 @@ class Temperature(Enum):
     COLD = "COLD"
     OK = "OK"
     HOT = "HOT"
-
+# Bad air quality = humidity out of bounds, e.g. too dry or too moist
+class AirQuality(Enum):
+    BAD = "BAD"
+    OK = "OK"
 
 class WorldState:
 
@@ -21,7 +24,7 @@ class WorldState:
 
         # Sensor-derived state
         self.temperature = Temperature.OK
-
+        self.air_quality = AirQuality.OK
 
     def _load_config(self):
 
@@ -32,7 +35,7 @@ class WorldState:
 
 
     def update_from_sensors(self, sensors):
-
+        # Temperature
         temp = sensors.temperature
 
         limits = self.config["temperature"]
@@ -45,6 +48,22 @@ class WorldState:
 
         else:
             self.temperature = Temperature.OK
+
+        # Humidity
+
+        humidity = sensors.humidity
+
+        limits = self.config["humidity"]
+
+        if (
+            humidity < limits["low_limit"]
+            or humidity > limits["high_limit"]
+        ):
+            self.air_quality = AirQuality.BAD
+
+        else:
+            self.air_quality = AirQuality.OK
+
 
 
     def fan_enabled(self):
