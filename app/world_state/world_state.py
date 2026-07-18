@@ -65,7 +65,7 @@ class WorldState:
             self.air_quality = AirQuality.OK
 
 
-
+    # Those functions are called from the app/executor.py
     def fan_enabled(self):
         self.fan_on = True
 
