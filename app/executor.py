@@ -1,7 +1,7 @@
 from hardware import hardware_manager as hardware
 
 
-def execute(action):
+def execute(action, world):
 
     if action == "turn_fan_on":
         hardware.fan_on()
@@ -26,7 +26,6 @@ def execute(action):
         # Environment changes.
         # Nothing to trigger.
         pass
-
 
     else:
         raise ValueError(

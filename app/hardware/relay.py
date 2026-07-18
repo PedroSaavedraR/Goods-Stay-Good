@@ -1,8 +1,5 @@
 from smbus import SMBus
 
-from logger import log
-
-
 # PCAL9535A
 
 ADDRESS = 0x20
@@ -69,12 +66,6 @@ def _set_relay(number, enabled):
 
     _write(
         OUTPUT_STATE
-    )
-
-    log.info(
-        "Relay %s -> %s",
-        number,
-        enabled
     )
 
 

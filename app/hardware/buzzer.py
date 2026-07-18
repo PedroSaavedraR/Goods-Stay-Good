@@ -1,9 +1,7 @@
 import RPi.GPIO as GPIO
 
-from logger import log
 
-
-PIN = 4
+PIN = 18
 FREQUENCY = 500  # Hz
 
 
@@ -22,14 +20,10 @@ _pwm = GPIO.PWM(
 
 
 def on():
-    log.info("Buzzer ON")
-
     _pwm.start(
         50  # duty cycle %
     )
 
 
 def off():
-    log.info("Buzzer OFF")
-
     _pwm.stop()

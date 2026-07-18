@@ -1,30 +1,25 @@
 from pathlib import Path
 
-
-DOMAIN = "domain.pddl"
-OUTPUT = "problem.pddl"
+from world_state.world_state import Temperature
 
 
-def generate(
-    temperature,
-    fan_on,
-    heater_on,
-):
+OUTPUT = Path(__file__).parent / "problem.pddl"
+
+
+def generate(world):
 
     facts = []
 
-
-    if fan_on:
+    if world.fan_on:
         facts.append("(fan_on)")
 
-    if heater_on:
+    if world.heater_on:
         facts.append("(heater_on)")
 
-
-    if temperature == "HOT":
+    if world.temperature == Temperature.HOT:
         facts.append("(temperature_hot)")
 
-    elif temperature == "COLD":
+    elif world.temperature == Temperature.COLD:
         facts.append("(temperature_cold)")
 
     else:
@@ -40,25 +35,19 @@ def generate(
         {' '.join(facts)}
     )
 
-
     (:goal
         (and
             (temperature_ok)
-            (not(heater_on))
-            (not(fan_on))
+            (not (heater_on))
+            (not (fan_on))
         )
     )
 )
 """
 
 
-    Path(OUTPUT).write_text(problem)
+    OUTPUT.write_text(problem)
 
 
 if __name__ == "__main__":
-
-    generate(
-        temperature="HOT",
-        fan_on=False,
-        heater_on=False,
-    )
+    print("This file is meant to be called by main.py")

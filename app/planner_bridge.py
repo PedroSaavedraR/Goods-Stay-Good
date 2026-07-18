@@ -1,36 +1,48 @@
 import subprocess
+from pathlib import Path
 
 
-def create_plan():
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+FAST_DOWNWARD = BASE_DIR / "fast-downward"
+PLANNER_DIR = BASE_DIR / "planner"
+
+
+def plan():
 
     subprocess.run(
         [
             "./fast-downward.py",
-            "domain.pddl",
-            "problem.pddl",
+            str(PLANNER_DIR / "domain.pddl"),
+            str(PLANNER_DIR / "problem.pddl"),
             "--search",
             "astar(lmcut())"
         ],
-        cwd="../fast-downward"
+        cwd=FAST_DOWNWARD,
+        check=True,
     )
 
+    plan_file = FAST_DOWNWARD / "sas_plan"
 
-    with open(
-        "../fast-downward/plan"
-    ) as f:
+    if not plan_file.exists():
+        return None
+
+
+    with open(plan_file) as f:
 
         for line in f:
 
-            if line.startswith(";"):
+            line = line.strip()
+
+            if not line or line.startswith(";"):
                 continue
 
-            return line.strip().replace(
-                ")",
-                ""
-            ).replace(
-                "(",
-                ""
+            action = (
+                line
+                .replace("(", "")
+                .replace(")", "")
             )
 
+            return action.split()[0]
 
     return None

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from .mqtt import mqtt_state
 from .ultrasonic import get_distance
-from .sunset import sunset_checker
+from .sunset import sun_has_set
 
 
 @dataclass(frozen=True)
@@ -36,5 +36,5 @@ def read() -> SensorSnapshot:
         motion_detected=data["motion"],
         motion_timestamp=motion_datetime,
         rear_distance=get_distance(),
-        sun_has_set=sunset_checker.sun_has_set(),
+        sun_has_set=sun_has_set(),
     )

@@ -2,9 +2,6 @@ import time
 
 import RPi.GPIO as GPIO
 
-from logger import log
-
-
 
 TRIG = 22
 ECHO = 27

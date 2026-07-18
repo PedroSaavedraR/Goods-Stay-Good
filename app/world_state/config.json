@@ -1,6 +1,6 @@
 {
     "temperature": {
-        "cold_limit": 18.0,
-        "hot_limit": 25.0
+        "cold_limit": 30.0,
+        "hot_limit": 37.0
     }
 }
