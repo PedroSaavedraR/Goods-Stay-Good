@@ -191,3 +191,46 @@
 2026-07-14 13:00:16,209 | INFO | Plan empty — waiting for environment to change
 2026-07-17 03:39:07,454 | INFO | MQTT connected to localhost
 2026-07-17 03:42:43,539 | INFO | MQTT connected to localhost
+2026-07-17 16:16:00,941 | INFO | MQTT connected to localhost
+2026-07-17 16:16:00,981 | INFO | Motion update: False
+2026-07-17 16:16:01,797 | INFO | Sunset times: sunrise 2026-07-17T03:23:30+00:00, sunset 2026-07-17T19:28:53+00:00
+2026-07-17 16:16:01,852 | WARNING | Hardware init failed (expected on non-RPi): No module named 'smbus'
+2026-07-17 16:16:01,853 | INFO | Smart truck starting
+2026-07-17 16:16:01,904 | INFO | Predicates: {'cargo_checked', 'drive_safe', 'rear_clear', 'temperature_ok', 'humidity_ok'}
+2026-07-17 16:16:01,991 | INFO | New plan: []
+2026-07-17 16:16:01,992 | INFO | Plan empty — waiting for environment to change
+2026-07-17 16:16:11,434 | INFO | Motion update: True
+2026-07-17 17:08:32,859 | INFO | MQTT connected to localhost
+2026-07-17 17:08:32,885 | INFO | Motion update: False
+2026-07-17 17:08:33,096 | INFO | Motion update: False
+2026-07-17 17:08:33,356 | INFO | Sunset times: sunrise 2026-07-17T03:23:30+00:00, sunset 2026-07-17T19:28:53+00:00
+2026-07-17 17:08:33,402 | WARNING | Hardware init failed (expected on non-RPi): No module named 'smbus'
+2026-07-17 17:08:33,403 | INFO | Smart truck starting
+2026-07-17 17:08:33,454 | INFO | World version 1: {'cargo_checked', 'drive_safe', 'humidity_ok', 'rear_clear', 'temperature_hot'}
+2026-07-17 17:08:33,454 | INFO | Predicates: {'cargo_checked', 'drive_safe', 'humidity_ok', 'rear_clear', 'temperature_hot'}
+2026-07-17 17:08:34,770 | INFO | New plan: []
+2026-07-17 17:08:34,771 | INFO | Plan empty — waiting for environment to change
+2026-07-17 17:08:40,883 | INFO | Motion update: True
+2026-07-17 17:09:11,233 | INFO | Motion update: True
+2026-07-17 18:14:41,053 | INFO | MQTT connected to localhost
+2026-07-17 18:14:41,081 | INFO | Motion update: False
+2026-07-17 18:14:41,579 | INFO | Sunset times: sunrise 2026-07-17T03:23:30+00:00, sunset 2026-07-17T19:28:53+00:00
+2026-07-17 18:14:41,631 | WARNING | Hardware init failed (expected on non-RPi): [Errno 2] No such file or directory
+2026-07-17 18:14:41,632 | INFO | Smart truck starting
+2026-07-17 18:14:41,683 | INFO | Predicates: {'cargo_checked', 'drive_safe', 'rear_clear', 'humidity_ok', 'temperature_ok'}
+2026-07-17 18:14:42,733 | INFO | New plan: []
+2026-07-17 18:14:42,734 | INFO | Plan empty — waiting for environment to change
+2026-07-17 18:14:46,438 | INFO | Motion update: True
+2026-07-17 18:17:13,463 | INFO | MQTT connected to localhost
+2026-07-17 18:17:13,487 | INFO | Motion update: False
+2026-07-17 18:17:13,944 | INFO | Sunset times: sunrise 2026-07-17T03:23:30+00:00, sunset 2026-07-17T19:28:53+00:00
+2026-07-17 18:17:13,993 | WARNING | Hardware init failed (expected on non-RPi): [Errno 2] No such file or directory
+2026-07-17 18:17:13,994 | INFO | Smart truck starting
+2026-07-17 18:17:14,046 | INFO | Predicates: {'cargo_checked', 'temperature_ok', 'rear_clear', 'drive_safe', 'humidity_ok'}
+2026-07-17 18:17:14,849 | INFO | New plan: []
+2026-07-17 18:17:14,850 | INFO | Plan empty — waiting for environment to change
+2026-07-17 18:17:21,770 | INFO | Motion update: True
+2026-07-18 15:29:27,514 | INFO | MQTT connected to localhost
+2026-07-18 15:29:27,592 | INFO | Motion update: False
+2026-07-18 15:29:28,083 | ERROR | Failed to fetch sunset data: <urlopen error [Errno -3] Temporary failure in name resolution>
+2026-07-18 15:29:35,219 | INFO | Motion update: True

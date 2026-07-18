@@ -8,44 +8,59 @@ from executor import Executor
 from hardware import apply as hardware_apply
 from logger import log
 
-
 executor = Executor()
-last_planned_version = -1
-
 
 def main():
-    global last_planned_version
-
     log.info("Smart truck starting")
 
     while True:
         try:
-            # 1. Read sensors → update world
+            # =====================================
+            # 1. SENSOR UPDATE
+            # =====================================
             snapshot = read()
+
             world.apply(snapshot)
 
-            # 2. Replan if world changed or no plan exists (but only when world actually changed)
-            if world.needs_replan(last_planned_version) or (
-                not executor.plan and world.version != last_planned_version
-            ):
-                log.info("Predicates: %s", world.predicates())
-                plan = create_plan(world)
-                executor.set_plan(plan)
-                last_planned_version = world.version
-                if not plan:
-                    log.info("Plan empty — waiting for environment to change")
+            log.info(
+                "World: %s",
+                world.predicates()
+            )
 
-            # 3. Execute one action per tick
+            # =====================================
+            # 2. ALWAYS PLAN
+            # =====================================
+
+            plan = create_plan(world)
+
+            log.info(
+                "New plan: %s",
+                plan
+            )
+
+            executor.set_plan(plan)
+
+            # =====================================
+            # 3. EXECUTE ONE ACTION
+            # =====================================
+
             if executor.plan:
                 executor.execute_next(world)
 
-            # 4. Mirror world state to physical hardware
+            # =====================================
+            # 4. HARDWARE MIRROR
+            # =====================================
+
             hardware_apply(world)
 
         except Exception as exc:
-            log.error("Main loop error: %s", exc)
-            log.debug(traceback.format_exc())
-
+            log.error(
+                "Main loop error: %s",
+                exc
+            )
+            log.debug(
+                traceback.format_exc()
+            )
         time.sleep(0.5)
 
 

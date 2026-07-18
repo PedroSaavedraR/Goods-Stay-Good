@@ -2,144 +2,284 @@
 
     (:requirements
         :strips
+        :negative-preconditions
     )
+
 
     (:predicates
 
-        (temperature_ok)
+        ;; ============================
+        ;; ENVIRONMENT
+        ;; ============================
+
         (temperature_hot)
+        (temperature_ok)
         (temperature_cold)
 
-        (humidity_ok)
         (humidity_high)
+        (humidity_ok)
         (humidity_low)
 
-        (cargo_checked)
-        (cargo_unchecked)
+        (cargo_stable)
+        (cargo_unstable)
 
         (rear_clear)
 
-        (driving_lights_on)
         (sun_has_set)
+
+
+        ;; ============================
+        ;; ACTUATORS
+        ;; ============================
+
         (fan_on)
+
         (heater_on)
-        (buzzer_on)
+
         (status_led_on)
 
+        (buzzer_on)
+
+        (driving_lights_on)
+
     )
 
 
-    ;
-    ; Cooling + humidity (fan serves both)
-    ;
+    ;; ==================================================
+    ;; FAN
+    ;; ==================================================
 
-    (:action fan_on
+    (:action turn_fan_on
+
         :precondition
-            (or
-                (temperature_hot)
-                (humidity_high)
-                (humidity_low)
+            (and
+                (not (fan_on))
+
+                (or
+                    (temperature_hot)
+                    (humidity_high)
+                    (humidity_low)
+                )
             )
+
         :effect
             (fan_on)
+
     )
 
-    (:action fan_off
+
+    (:action turn_fan_off
+
         :precondition
             (and
+                (fan_on)
+
                 (temperature_ok)
+
                 (humidity_ok)
             )
+
         :effect
             (not (fan_on))
-    )
-    ;
-    ; Heating
-    ;
 
-    (:action heater_on
-        :precondition
-            (temperature_cold)
-        :effect
-            (heater_on)
     )
 
-    (:action heater_off
-        :precondition
-            (temperature_ok)
-        :effect
-            (not (heater_on))
-    )
-    ;
-    ; Cargo
-    ;
 
-    (:action check_cargo
+    ;; ==================================================
+    ;; VIRTUAL COOLING EFFECT
+    ;;
+    ;; Not executed by hardware.
+    ;; Represents physics happening.
+    ;; ==================================================
+
+    (:action cool_down
+
         :precondition
-            (cargo_unchecked)
+            (and
+                (fan_on)
+                (temperature_hot)
+            )
+
         :effect
             (and
-                (cargo_checked)
-                (not (cargo_unchecked))
+                (temperature_ok)
+                (not (temperature_hot))
             )
+
     )
 
 
-    ;
-    ; Driving lights
-    ;
+    ;; ==================================================
+    ;; HEATER
+    ;; ==================================================
 
-    (:action turn_lights_on
+    (:action turn_heater_on
+
         :precondition
-            (sun_has_set)
+            (and
+                (temperature_cold)
+                (not (heater_on))
+            )
+
         :effect
-            (driving_lights_on)
+            (heater_on)
+
     )
 
-    (:action turn_lights_off
+
+    (:action turn_heater_off
+
         :precondition
-            (not (sun_has_set))
+            (and
+                (heater_on)
+                (temperature_ok)
+            )
+
         :effect
-            (not (driving_lights_on))
+            (not (heater_on))
+
     )
 
 
-    ;
-    ; Buzzer (rear alert)
-    ;
+    ;; Virtual heating
 
-    (:action buzzer_on
+    (:action heat_up
+
         :precondition
-            (not (rear_clear))
+            (and
+                (heater_on)
+                (temperature_cold)
+            )
+
         :effect
-            (buzzer_on)
+            (and
+                (temperature_ok)
+                (not (temperature_cold))
+            )
+
     )
 
-    (:action buzzer_off
+
+    ;; ==================================================
+    ;; HUMIDITY
+    ;; ==================================================
+
+    (:action dry_air
+
         :precondition
-            (rear_clear)
+            (and
+                (fan_on)
+                (humidity_high)
+            )
+
         :effect
-            (not (buzzer_on))
+            (and
+                (humidity_ok)
+                (not (humidity_high))
+            )
+
     )
 
 
-    ;
-    ; Status LED (cargo unchecked indicator)
-    ;
+    (:action humidify_air
 
-    (:action status_led_on
         :precondition
-            (cargo_unchecked)
+            (and
+                (fan_on)
+                (humidity_low)
+            )
+
+        :effect
+            (and
+                (humidity_ok)
+                (not (humidity_low))
+            )
+
+    )
+
+
+    ;; ==================================================
+    ;; CARGO STATUS LED
+    ;; ==================================================
+
+    (:action turn_status_led_on
+
+        :precondition
+            (cargo_unstable)
+
         :effect
             (status_led_on)
+
     )
 
-    (:action status_led_off
+
+    (:action turn_status_led_off
+
         :precondition
-            (cargo_checked)
+            (cargo_stable)
+
         :effect
             (not (status_led_on))
+
     )
 
-)
 
+    ;; ==================================================
+    ;; BUZZER
+    ;; ==================================================
+
+    (:action turn_buzzer_on
+
+        :precondition
+            (not (rear_clear))
+
+        :effect
+            (buzzer_on)
+
+    )
+
+
+    (:action turn_buzzer_off
+
+        :precondition
+            (rear_clear)
+
+        :effect
+            (not (buzzer_on))
+
+    )
+
+
+    ;; ==================================================
+    ;; LIGHTS
+    ;; ==================================================
+
+    (:action turn_lights_on
+
+        :precondition
+            (and
+                (sun_has_set)
+                (not (driving_lights_on))
+            )
+
+        :effect
+            (driving_lights_on)
+
+    )
+
+
+    (:action turn_lights_off
+
+        :precondition
+            (and
+                (not (sun_has_set))
+                (driving_lights_on)
+            )
+
+        :effect
+            (not (driving_lights_on))
+
+    )
+
+
+)

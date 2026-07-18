@@ -21,5 +21,6 @@ fast-downward/
 # Generated planner files
 planner/problem.pddl
 planner/generated_plan.txt
-zwave-stack/store*/
+zwave-stack/*store*/
 zwave-stack/logs/
+zwave-stack/mosquitto/log/
