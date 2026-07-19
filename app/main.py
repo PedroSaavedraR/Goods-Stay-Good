@@ -16,13 +16,12 @@ from executor import execute
 from hardware import hardware_manager as hardware
 
 
-def shutdown():
-    print("\nShutting down: disabling all actuators...")
+def disable_all_actuators():
+    print("Disabling all actuators...")
 
     hardware.fan_off()
     hardware.heating_lamp_off()
-
-    print("All actuators disabled.")
+    hardware.driving_lights_off()
 
 
 def main():
@@ -30,8 +29,7 @@ def main():
     world = WorldState()
 
     # Reset physical actuators to match initial WorldState
-    hardware.fan_off()
-    hardware.heating_lamp_off()
+    disable_all_actuators()
 
     try:
         while True:
@@ -59,7 +57,7 @@ def main():
         print("\nCTRL+C received.")
 
     finally:
-        shutdown()
+        disable_all_actuators()
 
 
 if __name__ == "__main__":

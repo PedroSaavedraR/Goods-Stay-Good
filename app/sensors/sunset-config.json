@@ -1,0 +1,22 @@
+{
+    "current_location": "berlin",
+
+    "debug_override": "null",
+
+    "debug_override_help": {
+        "possible_values": [
+            null,
+            "day",
+            "night"
+        ],
+        "description": "null uses real API, day forces daylight, night forces darkness"
+    },
+
+    "locations": {
+        "berlin": {
+            "name": "Berlin",
+            "latitude": 52.5200,
+            "longitude": 13.4050
+        }
+    }
+}

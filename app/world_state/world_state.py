@@ -2,7 +2,6 @@ import json
 from enum import Enum
 from pathlib import Path
 
-
 class Temperature(Enum):
     COLD = "COLD"
     OK = "OK"
@@ -21,10 +20,13 @@ class WorldState:
         # Actuator state
         self.fan_on = False
         self.heater_on = False
+        self.driving_lights_on = False
 
         # Sensor-derived state
         self.temperature = Temperature.OK
         self.air_quality = AirQuality.OK
+        self.outside_bright_enough = True
+
 
     def _load_config(self):
 
@@ -50,7 +52,6 @@ class WorldState:
             self.temperature = Temperature.OK
 
         # Humidity
-
         humidity = sensors.humidity
 
         limits = self.config["humidity"]
@@ -63,6 +64,12 @@ class WorldState:
 
         else:
             self.air_quality = AirQuality.OK
+
+        # Daylight
+        self.outside_bright_enough = not sensors.sun_has_set
+
+
+
 
 
     # Those functions are called from the app/executor.py
@@ -77,3 +84,9 @@ class WorldState:
 
     def heater_disabled(self):
         self.heater_on = False
+
+    def driving_lights_enabled(self):
+        self.driving_lights_on = True
+
+    def driving_lights_disabled(self):
+        self.driving_lights_on = False

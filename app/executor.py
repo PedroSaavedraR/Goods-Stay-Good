@@ -19,6 +19,14 @@ def execute(action, world):
         hardware.heating_lamp_off()
         world.heater_disabled()
 
+    elif action == "turn_driving_lights_on":
+        hardware.driving_lights_on()
+        world.driving_lights_enabled()
+
+    elif action == "turn_driving_lights_off":
+        hardware.driving_lights_off()
+        world.driving_lights_disabled()
+
     elif action in (
         "cool_down",
         "heat_up",

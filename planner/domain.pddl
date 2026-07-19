@@ -1,4 +1,4 @@
-(define (domain heating-cooling)
+(define (domain smart-truck)
 
     (:requirements
         :strips
@@ -15,7 +15,41 @@
         (temperature_cold)
 
         (bad_air)
+
+        (driving_lights_on)
+        (outside_bright_enough)
     )
+
+
+    ; -------------------------
+    ; Driving lights control
+    ; -------------------------
+
+    (:action turn_driving_lights_on
+
+        :precondition
+            (and
+                (not (outside_bright_enough))
+                (not (driving_lights_on))
+            )
+
+        :effect
+            (driving_lights_on)
+    )
+
+
+    (:action turn_driving_lights_off
+
+        :precondition
+            (and
+                (outside_bright_enough)
+                (driving_lights_on)
+            )
+
+        :effect
+            (not (driving_lights_on))
+    )
+
 
 
     ; -------------------------

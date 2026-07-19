@@ -10,7 +10,9 @@ def generate(world):
 
     facts = []
 
+    # -------------------------
     # Actuator state
+    # -------------------------
 
     if world.fan_on:
         facts.append("(fan_on)")
@@ -18,8 +20,13 @@ def generate(world):
     if world.heater_on:
         facts.append("(heater_on)")
 
+    if world.driving_lights_on:
+        facts.append("(driving_lights_on)")
 
+
+    # -------------------------
     # Temperature state
+    # -------------------------
 
     if world.temperature == Temperature.HOT:
         facts.append("(temperature_hot)")
@@ -31,16 +38,47 @@ def generate(world):
         facts.append("(temperature_ok)")
 
 
+    # -------------------------
     # Air quality state
+    # -------------------------
 
     if world.air_quality == AirQuality.BAD:
         facts.append("(bad_air)")
 
 
+    # -------------------------
+    # Daylight state
+    # -------------------------
+
+    if world.outside_bright_enough:
+        facts.append("(outside_bright_enough)")
+
+
+    # -------------------------
+    # Goal state
+    # -------------------------
+
+    goal = [
+        "(temperature_ok)",
+        "(not (heater_on))",
+        "(not (fan_on))",
+        "(not (bad_air))",
+    ]
+
+    if world.outside_bright_enough:
+        goal.append(
+            "(not (driving_lights_on))"
+        )
+    else:
+        goal.append(
+            "(driving_lights_on)"
+        )
+
+
     problem = f"""
 (define (problem smart-truck)
 
-    (:domain heating-cooling)
+    (:domain smart-truck)
 
     (:init
         {' '.join(facts)}
@@ -48,15 +86,11 @@ def generate(world):
 
     (:goal
         (and
-            (temperature_ok)
-            (not (heater_on))
-            (not (fan_on))
-            (not (bad_air))
+            {' '.join(goal)}
         )
     )
 )
 """
-
 
     OUTPUT.write_text(problem)
 
