@@ -1,97 +1,149 @@
-(define (domain cargo)
+(define (domain cargo-truck)
 
-(:requirements :strips)
-
-(:predicates
-    ;; Temperature
-    (high-temp)
-    (low-temp)
-    (normal-temp)
-
-    ;; Sensors
-    (vibration-detected)
-    (load-shifted)
-
-    ;; Actuators
-    (cooler-on)
-    (heater-on)
-    (brakes-applied)
-
-    ;; Notification
-    (alert-sent)
-)
-
-;;Actions temperature based
-
-(:action turn-on-cooler
-
-    :precondition (high-temp)
-
-    :effect (cooler-on)
-)
-
-(:action cool-cargo
-
-    :precondition (and (high-temp) (cooler-on))
-
-    :effect (and
-        (normal-temp)
-        (not (high-temp))
+    (:requirements
+        :strips
+        :negative-preconditions
     )
-)
 
-(:action turn-off-cooler
 
-    :precondition (and (normal-temp) (cooler-on))
+    (:predicates
+        (fan_on)
+        (heater_on)
+	(obstacle_near)
+        (buzzer_on)
 
-    :effect (not (cooler-on))
-)
+        (temperature_hot)
+        (temperature_ok)
+        (temperature_cold)
 
-(:action turn-on-heater
-
-    :precondition (low-temp)
-
-    :effect (heater-on)
-)
-
-(:action heat-cargo
-
-    :precondition (and (low-temp) (heater-on))
-
-    :effect (and
-        (normal-temp)
-        (not (low-temp))
+        (bad_air)
     )
+
+
+    ; -------------------------
+    ; Fan control
+    ; -------------------------
+
+    (:action turn_fan_on_temperature
+        :precondition
+            (and
+                (temperature_hot)
+                (not (fan_on))
+            )
+
+        :effect
+            (fan_on)
+    )
+
+
+    (:action turn_fan_on_air
+        :precondition
+            (and
+                (bad_air)
+                (not (fan_on))
+            )
+
+        :effect
+            (fan_on)
+    )
+
+
+    (:action cool_down
+        :precondition
+            (and
+                (temperature_hot)
+                (fan_on)
+            )
+
+        :effect
+            (and
+                (temperature_ok)
+                (not (temperature_hot))
+            )
+    )
+
+
+    (:action clean_air
+        :precondition
+            (and
+                (bad_air)
+                (fan_on)
+            )
+
+        :effect
+            (not (bad_air))
+    )
+
+
+    (:action turn_fan_off
+        :precondition
+            (and
+                (temperature_ok)
+                (not (bad_air))
+                (fan_on)
+            )
+
+        :effect
+            (not (fan_on))
+    )
+
+
+    ; -------------------------
+    ; Heater control
+    ; -------------------------
+
+    (:action turn_heater_on
+        :precondition
+            (and
+                (temperature_cold)
+                (not (heater_on))
+            )
+
+        :effect
+            (heater_on)
+    )
+
+
+    (:action heat_up
+        :precondition
+            (and
+                (temperature_cold)
+                (heater_on)
+            )
+
+        :effect
+            (and
+                (temperature_ok)
+                (not (temperature_cold))
+            )
+    )
+
+
+    (:action turn_heater_off
+        :precondition
+            (and
+                (temperature_ok)
+                (heater_on)
+            )
+
+        :effect
+            (not (heater_on))
+    )
+
+    ; -------------------------
+    ; Ultrasonic-sensor
+    ; -------------------------
+    
+    (:action turn_buzzer_on
+        :precondition
+            (and
+                (obstacle_near)
+                (not (buzzer_on))
+            )
+
+        :effect
+            (buzzer_on)
+    )
+
 )
 
-(:action turn-off-heater
-
-    :precondition (and (normal-temp) (heater-on))
-
-    :effect (not (heater-on))
-)
-;;actions safety based
-
-(:action apply-brakes
-
-    :precondition (vibration-detected)
-
-    :effect (brakes-applied)
-)
-
-(:action apply-brakes-load
-
-    :precondition (load-shifted)
-
-    :effect (brakes-applied)
-)
-
-(:action send-alert
-
-    :precondition (brakes-applied)
-
-    :effect (alert-sent)
-)
-
-
-)
