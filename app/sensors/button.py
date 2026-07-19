@@ -1,32 +1,46 @@
-from gpiozero import Button
-
-from world_state import world
-
-from logger import log
-
+import RPi.GPIO as GPIO
+from datetime import datetime
 
 
 PIN = 17
 
+GPIO.setmode(GPIO.BCM)
 
-
-button = Button(
-    PIN
+GPIO.setup(
+    PIN,
+    GPIO.IN,
+    pull_up_down=GPIO.PUD_UP
 )
 
 
-
-def cargo_checked():
-
-    log.info(
-        "Driver confirmed cargo"
-    )
+last_pressed = None
+last_state = GPIO.HIGH
 
 
-    world.acknowledge_cargo()
+def update():
+
+    global last_pressed
+    global last_state
+
+    current = GPIO.input(PIN)
+
+
+    # detect falling edge manually
+    if (
+        last_state == GPIO.HIGH
+        and current == GPIO.LOW
+    ):
+        last_pressed = datetime.now()
+
+        print(
+            "Cargo button pressed:",
+            last_pressed
+        )
+
+
+    last_state = current
 
 
 
-button.when_pressed = (
-    cargo_checked
-)
+def get_last_pressed():
+    return last_pressed

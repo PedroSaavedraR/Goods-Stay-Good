@@ -8,7 +8,7 @@ from . import relay
 
 def cargo_led_on():
     relay.cargo_led_on()
-
+    print("HARDWARE: cargo LED ON")
 
 def cargo_led_off():
     relay.cargo_led_off()

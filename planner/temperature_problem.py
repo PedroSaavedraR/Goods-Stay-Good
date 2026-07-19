@@ -12,7 +12,14 @@ def generate(world):
     # Heater state
     if world.heater_on:
         facts.append("(heater_on)")
+    else:
+        facts.append("(not (heater_on))")
 
+    # Fan state
+    if world.fan_on:
+        facts.append("(fan_on)")
+    else:
+        facts.append("(not (fan_on))")
 
     # Temperature state
     if world.temperature == Temperature.COLD:

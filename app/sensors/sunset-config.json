@@ -1,7 +1,7 @@
 {
     "current_location": "berlin",
 
-    "debug_override": "null",
+    "debug_override": "night",
 
     "debug_override_help": {
         "possible_values": [

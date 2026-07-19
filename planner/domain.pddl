@@ -24,6 +24,9 @@
 
         (buzzer_on)
         (rear_clear)
+
+        (cargo_might_be_unstable)
+        (cargo_led_on)
     )
 
 
@@ -54,6 +57,50 @@
 
         :effect
             (not (driving_lights_on))
+    )
+
+
+
+    ; -------------------------
+    ; Cargo status LED control
+    ; -------------------------
+
+    (:action turn_cargo_led_on
+
+        :precondition
+            (and
+                (cargo_might_be_unstable)
+                (not (cargo_led_on))
+            )
+
+        :effect
+            (cargo_led_on)
+    )
+
+
+    (:action check_cargo
+
+        :precondition
+            (and
+                (cargo_might_be_unstable)
+                (cargo_led_on)
+            )
+
+        :effect
+            (not (cargo_might_be_unstable))
+    )
+
+
+    (:action turn_cargo_led_off
+
+        :precondition
+            (and
+                (not (cargo_might_be_unstable))
+                (cargo_led_on)
+            )
+
+        :effect
+            (not (cargo_led_on))
     )
 
 
@@ -138,7 +185,11 @@
             )
 
         :effect
-            (not (fan_needed_by_temperature))
+            (and
+                (temperature_ok)
+                (not (temperature_hot))
+                (not (fan_needed_by_temperature))
+            )
     )
 
 
@@ -151,7 +202,10 @@
             )
 
         :effect
-            (not (fan_needed_by_air))
+            (and
+                (not (bad_air))
+                (not (fan_needed_by_air))
+            )
     )
 
 

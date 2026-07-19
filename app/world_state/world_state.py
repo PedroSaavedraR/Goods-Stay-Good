@@ -6,6 +6,7 @@ class Temperature(Enum):
     COLD = "COLD"
     OK = "OK"
     HOT = "HOT"
+
 # Bad air quality = humidity out of bounds, e.g. too dry or too moist
 class AirQuality(Enum):
     BAD = "BAD"
@@ -32,6 +33,14 @@ class WorldState:
         # Derived needs
         self.fan_needed_by_temperature = False
         self.fan_needed_by_air = False
+
+        # Cargo status
+        self.cargo_might_be_unstable = False
+        self.cargo_led_on = False
+
+        self.last_motion_timestamp = None
+        self.last_cargo_confirmation_timestamp = None
+
 
 
     def _load_config(self):
@@ -95,6 +104,40 @@ class WorldState:
         )
 
 
+        # Cargo movement detection
+
+        if (
+            sensors.motion_detected
+            and sensors.motion_timestamp is not None
+        ):
+            self.last_motion_timestamp = (
+                sensors.motion_timestamp
+            )
+
+            self.cargo_might_be_unstable = True
+
+
+        # Driver confirmed cargo is OK
+        if sensors.button_timestamp is not None:
+            self.last_cargo_confirmation_timestamp = (
+                sensors.button_timestamp
+            )
+
+            if (
+                self.last_motion_timestamp is not None
+                and sensors.button_timestamp
+                > self.last_motion_timestamp
+            ):
+                self.cargo_might_be_unstable = False
+
+
+
+
+
+
+
+
+
     # Those functions are called from the app/executor.py
     def fan_enabled(self):
         self.fan_on = True
@@ -119,3 +162,9 @@ class WorldState:
 
     def buzzer_disabled(self):
         self.buzzer_on = False
+
+    def cargo_led_enabled(self):
+        self.cargo_led_on = True
+
+    def cargo_led_disabled(self):
+        self.cargo_led_on = False

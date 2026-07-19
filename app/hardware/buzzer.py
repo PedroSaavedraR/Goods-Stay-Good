@@ -21,7 +21,7 @@ _pwm = GPIO.PWM(
 
 def on():
     _pwm.start(
-        50  # duty cycle %
+        100  # duty cycle %
     )
 
 

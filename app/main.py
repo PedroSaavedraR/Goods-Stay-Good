@@ -18,6 +18,7 @@ from planner import (
     fan_cleanup_problem,
     lights_problem,
     rear_problem,
+    cargo_problem,
 )
 
 from executor import execute
@@ -33,7 +34,7 @@ def disable_all_actuators():
     hardware.heating_lamp_off()
     hardware.driving_lights_off()
     hardware.buzzer_off()
-
+    hardware.cargo_led_off()
 
 controllers = [
     temperature_problem,
@@ -41,6 +42,7 @@ controllers = [
     lights_problem,
     rear_problem,
     fan_cleanup_problem,
+    cargo_problem,
 ]
 
 
@@ -65,6 +67,17 @@ def main():
                 sensors
             )
 
+
+            print("WORLD:")
+            print(" temperature:", world.temperature)
+            print(" air:", world.air_quality)
+            print(" fan_on:", world.fan_on)
+            print(" fan_needed_by_temperature:", world.fan_needed_by_temperature)
+            print(" fan_needed_by_air:", world.fan_needed_by_air)
+            print(" cargo_unstable:", world.cargo_might_be_unstable)
+            print(" cargo_led:", world.cargo_led_on)
+            print(" last_motion:", world.last_motion_timestamp)
+            print(" last_confirm:", world.last_cargo_confirmation_timestamp)
 
             for controller in controllers:
 

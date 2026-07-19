@@ -35,12 +35,21 @@ def execute(action, world):
         hardware.buzzer_off()
         world.buzzer_disabled()
 
+    elif action == "turn_cargo_led_on":
+        hardware.cargo_led_on()
+        world.cargo_led_enabled()
+
+    elif action == "turn_cargo_led_off":
+        hardware.cargo_led_off()
+        world.cargo_led_disabled()
+
 
     elif action in (
         "cool_down",
         "heat_up",
         "clean_air",
-        "drive_away"
+        "drive_away",
+        "check_cargo"
     ):
         # Environment changes.
         # Nothing to trigger.

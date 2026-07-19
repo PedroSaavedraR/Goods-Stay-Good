@@ -12,6 +12,14 @@ def generate(world):
     # Current air quality
     if world.air_quality == AirQuality.BAD:
         facts.append("(bad_air)")
+    else:
+        facts.append("(not (bad_air))")
+
+    # Current fan state
+    if world.fan_on:
+        facts.append("(fan_on)")
+    else:
+        facts.append("(not (fan_on))")
 
 
     # Fan reason

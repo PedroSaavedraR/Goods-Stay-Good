@@ -4,6 +4,7 @@ from datetime import datetime
 from .mqtt import mqtt_state
 from .ultrasonic import get_distance
 from .sunset import sun_has_set
+from . import button
 
 
 @dataclass(frozen=True)
@@ -12,12 +13,15 @@ class SensorSnapshot:
     humidity: float
     motion_detected: bool
     motion_timestamp: datetime | None
+    button_timestamp: datetime | None
     rear_distance: float
     sun_has_set: bool
 
 
 def read() -> SensorSnapshot:
     data = mqtt_state.snapshot()
+    button.update()
+    button_timestamp = button.get_last_pressed()
 
     motion_timestamp = data["motion_timestamp"]
 
@@ -35,6 +39,7 @@ def read() -> SensorSnapshot:
         humidity=data["humidity"],
         motion_detected=data["motion"],
         motion_timestamp=motion_datetime,
+        button_timestamp=button_timestamp,
         rear_distance=get_distance(),
         sun_has_set=sun_has_set(),
     )
