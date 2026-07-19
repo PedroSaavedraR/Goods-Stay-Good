@@ -27,10 +27,20 @@ def execute(action, world):
         hardware.driving_lights_off()
         world.driving_lights_disabled()
 
+    elif action == "turn_buzzer_on":
+        hardware.buzzer_on()
+        world.buzzer_enabled()
+
+    elif action == "turn_buzzer_off":
+        hardware.buzzer_off()
+        world.buzzer_disabled()
+
+
     elif action in (
         "cool_down",
         "heat_up",
-        "clean_air"
+        "clean_air",
+        "drive_away"
     ):
         # Environment changes.
         # Nothing to trigger.

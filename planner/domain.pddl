@@ -18,6 +18,9 @@
 
         (driving_lights_on)
         (outside_bright_enough)
+
+        (buzzer_on)
+        (rear_clear)
     )
 
 
@@ -50,6 +53,48 @@
             (not (driving_lights_on))
     )
 
+
+    ; -------------------------
+    ; Rear obstacle warning
+    ; -------------------------
+
+    (:action turn_buzzer_on
+
+        :precondition
+            (and
+                (not (rear_clear))
+                (not (buzzer_on))
+            )
+
+        :effect
+            (buzzer_on)
+    )
+
+
+    (:action drive_away
+
+        :precondition
+            (and
+                (not (rear_clear))
+                (buzzer_on)
+            )
+
+        :effect
+            (rear_clear)
+    )
+
+
+    (:action turn_buzzer_off
+
+        :precondition
+            (and
+                (rear_clear)
+                (buzzer_on)
+            )
+
+        :effect
+            (not (buzzer_on))
+    )
 
 
     ; -------------------------

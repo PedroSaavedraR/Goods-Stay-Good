@@ -22,7 +22,7 @@ def disable_all_actuators():
     hardware.fan_off()
     hardware.heating_lamp_off()
     hardware.driving_lights_off()
-
+    hardware.buzzer_off()
 
 def main():
 

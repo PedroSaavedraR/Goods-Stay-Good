@@ -6,5 +6,8 @@
     "humidity": {
         "low_limit": 20,
         "high_limit": 23
+    },
+    "ultrasonic": {
+        "threshold_cm": 10
     }
 }

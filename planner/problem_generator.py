@@ -10,10 +10,7 @@ def generate(world):
 
     facts = []
 
-    # -------------------------
     # Actuator state
-    # -------------------------
-
     if world.fan_on:
         facts.append("(fan_on)")
 
@@ -23,11 +20,12 @@ def generate(world):
     if world.driving_lights_on:
         facts.append("(driving_lights_on)")
 
+    if world.buzzer_on:
+        facts.append("(buzzer_on)")
 
-    # -------------------------
+
+
     # Temperature state
-    # -------------------------
-
     if world.temperature == Temperature.HOT:
         facts.append("(temperature_hot)")
 
@@ -38,21 +36,17 @@ def generate(world):
         facts.append("(temperature_ok)")
 
 
-    # -------------------------
     # Air quality state
-    # -------------------------
-
     if world.air_quality == AirQuality.BAD:
         facts.append("(bad_air)")
 
-
-    # -------------------------
     # Daylight state
-    # -------------------------
-
     if world.outside_bright_enough:
         facts.append("(outside_bright_enough)")
 
+    # Rear distance state
+    if world.rear_clear:
+        facts.append("(rear_clear)")
 
     # -------------------------
     # Goal state
@@ -63,6 +57,8 @@ def generate(world):
         "(not (heater_on))",
         "(not (fan_on))",
         "(not (bad_air))",
+        "(rear_clear)",
+        "(not (buzzer_on))",
     ]
 
     if world.outside_bright_enough:

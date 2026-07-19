@@ -21,12 +21,13 @@ class WorldState:
         self.fan_on = False
         self.heater_on = False
         self.driving_lights_on = False
+        self.buzzer_on = False
 
         # Sensor-derived state
         self.temperature = Temperature.OK
         self.air_quality = AirQuality.OK
         self.outside_bright_enough = True
-
+        self.rear_clear = True
 
     def _load_config(self):
 
@@ -69,6 +70,16 @@ class WorldState:
         self.outside_bright_enough = not sensors.sun_has_set
 
 
+        # Ultrasonic
+        dist = sensors.rear_distance
+
+        limits = self.config["ultrasonic"]
+
+        if dist > limits["threshold_cm"]:
+            self.rear_clear = True
+
+        else:
+            self.rear_clear = False
 
 
 
@@ -90,3 +101,9 @@ class WorldState:
 
     def driving_lights_disabled(self):
         self.driving_lights_on = False
+
+    def buzzer_enabled(self):
+        self.buzzer_on = True
+
+    def buzzer_disabled(self):
+        self.buzzer_on = False
