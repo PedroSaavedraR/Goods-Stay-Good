@@ -70,7 +70,7 @@ class WorldState:
             self.air_quality = AirQuality.OK
 
         #ultrasonic-buzzer
-        distance = sensors.distance
+        distance = sensors.rear_distance
         threshold = self.config["ultrasonic"]["threshold_cm"]
         if distance < threshold:
             self.obstacle = Obstacle.NEAR
