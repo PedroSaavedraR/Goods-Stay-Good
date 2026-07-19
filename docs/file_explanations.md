@@ -4,66 +4,60 @@ This file lists repository files and explains their purpose. Use this as a quick
 
 ---
 
-## Root
-
-- [README.md](README.md): Detailed project README (overview, architecture, setup, running, contributing).
-- [LICENSE](LICENSE): MIT license for the project.
-- [.gitignore](.gitignore): Files and folders excluded from version control and developer notes.
-
 ## app/
 
-- [app/__init__.py](app/__init__.py): Package marker for the `app` package (empty).
-- [app/main.py](app/main.py): Orchestrator and entry point. Runs the continuous sense → plan → act loop:
+- [__init__.py](app/__init__.py): Package marker for the `app` package (empty).
+- [main.py](app/main.py): Orchestrator and entry point. Runs the continuous sense → plan → act loop:
   - reads sensors via `sensors.sensor_reader.read()`
   - updates `WorldState`
   - generates a PDDL problem via `planner/problem_generator.py`
   - calls the planner through `planner_bridge.plan()`
   - executes planner actions via `executor.execute()`
   - handles graceful shutdown and initial actuator reset.
-- [app/executor.py](app/executor.py): Maps planner action names to effects: updates `WorldState` (fan/heater booleans) and calls hardware through `hardware_manager` when required. Raises on unknown actions.
-- [app/planner_bridge.py](app/planner_bridge.py): Subprocess wrapper that runs Fast Downward in `fast-downward/` to solve the generated PDDL problem (`planner/problem.pddl`). Parses the produced `sas_plan` and returns the next action or `None`.
+- [executor.py](app/executor.py): Maps planner action names to effects: updates `WorldState` (fan/heater booleans) and calls hardware through `hardware_manager` when required. Raises on unknown actions.
+- [planner_bridge.py](app/planner_bridge.py): Subprocess wrapper that runs Fast Downward in `fast-downward/` to solve the generated PDDL problem (`planner/problem.pddl`). Parses the produced `sas_plan` and returns the next action or `None`.
 
-## app/world_state/
+## World State
 
-- [app/world_state/world_state.py](app/world_state/world_state.py): Central world model and symbolic classification logic. Responsibilities:
+- [world_state.py](app/world_state/world_state.py): Central world model and symbolic classification logic. Responsibilities:
   - loads runtime thresholds and other configuration from `config.json`
   - stores actuator flags (`fan_on`, `heater_on`) and symbolic sensor-derived state (`temperature`, `air_quality` enums)
   - exposes `update_from_sensors()` to convert raw sensor readings into symbolic states
   - exposes helper methods called by the executor (`fan_enabled()`, `heater_disabled()`, etc.)
-- [app/world_state/config.json](app/world_state/config.json): Thresholds for classifying temperature and humidity (used by `WorldState`). Edit to tune behavior.
+- [config.json](app/world_state/config.json): Thresholds for classifying temperature and humidity (used by `WorldState`). Edit to tune behavior.
 
-## app/hardware/
+## Hardware
 
-- [app/hardware/__init__.py](app/hardware/__init__.py): Package marker for the hardware module (empty).
-- [app/hardware/hardware_manager.py](app/hardware/hardware_manager.py): High-level hardware API used across the app. Provides human-friendly functions such as `fan_on()`, `fan_off()`, `buzzer_on()` and delegates to concrete drivers in this folder.
-- [app/hardware/relay.py](app/hardware/relay.py): I²C driver for a PCAL9535A-based relay board. It:
+- [__init__.py](app/hardware/__init__.py): Package marker for the hardware module (empty).
+- [hardware_manager.py](app/hardware/hardware_manager.py): High-level hardware API used across the app. Provides human-friendly functions such as `fan_on()`, `fan_off()`, `buzzer_on()` and delegates to concrete drivers in this folder.
+- [relay.py](app/hardware/relay.py): I²C driver for a PCAL9535A-based relay board. It:
   - configures the IC ports as outputs via SMBus
   - maintains a byte bitmask of outputs (relays are active LOW)
   - exposes functions to toggle mapped relays (cargo LED, driving lights, fan, heating lamp).
-- [app/hardware/buzzer.py](app/hardware/buzzer.py): PWM buzzer control using RPi.GPIO. Configures a GPIO pin and exposes `on()`/`off()` to start/stop PWM.
+- [buzzer.py](app/hardware/buzzer.py): PWM buzzer control using RPi.GPIO. Configures a GPIO pin and exposes `on()`/`off()` to start/stop PWM.
 
-## app/sensors/
+## Sensors
 
-- [app/sensors/__init__.py](app/sensors/__init__.py): Package marker for sensors (empty).
-- [app/sensors/sensor_reader.py](app/sensors/sensor_reader.py): Aggregator that produces a `SensorSnapshot` dataclass. It:
+- [__init__.py](app/sensors/__init__.py): Package marker for sensors (empty).
+- [sensor_reader.py](app/sensors/sensor_reader.py): Aggregator that produces a `SensorSnapshot` dataclass. It:
   - reads the thread-safe `mqtt_state.snapshot()` from `mqtt.py`
   - converts motion timestamps to Python datetimes
   - fetches ultrasonic distance via `ultrasonic.get_distance()`
   - queries `sunset.sun_has_set()` and bundles all values into the snapshot consumed by `WorldState`.
-- [app/sensors/mqtt.py](app/sensors/mqtt.py): MQTT listener and in-memory state. Details:
+- [mqtt.py](app/sensors/mqtt.py): MQTT listener and in-memory state. Details:
   - connects to `localhost:1883` and subscribes to `zwave/#`
   - parses JSON payloads and updates `MQTTState` fields (`temperature`, `humidity`, `motion`, `motion_timestamp`) under a lock
   - starts the `paho-mqtt` loop in a background thread at import time so other scripts can simply import `mqtt_state` and use `snapshot()`.
-- [app/sensors/ultrasonic.py](app/sensors/ultrasonic.py): HC-SR04 ultrasonic distance reader using RPi.GPIO. Sends trigger pulses, measures echo with timeouts, and returns distance in centimeters or `None` on timeout.
-- [app/sensors/button.py](app/sensors/button.py): GPIO button handler using `gpiozero.Button` on pin 17. On press, logs a message and calls `world.acknowledge_cargo()` to record driver confirmation (bridge to world state).
-- [app/sensors/sunset.py](app/sensors/sunset.py): Fetches sunrise/sunset times from sunrise-sunset.org for Berlin coordinates and returns whether the sun has set (True/False) or `None` on error.
-- [app/sensors/.button.py.swp](app/sensors/.button.py.swp): Editor swap/temporary file; safe to ignore or remove.
+- [ultrasonic.py](app/sensors/ultrasonic.py): HC-SR04 ultrasonic distance reader using RPi.GPIO. Sends trigger pulses, measures echo with timeouts, and returns distance in centimeters or `None` on timeout.
+- [button.py](app/sensors/button.py): GPIO button handler using `gpiozero.Button` on pin 17. On press, logs a message and calls `world.acknowledge_cargo()` to record driver confirmation (bridge to world state).
+- [sunset.py](app/sensors/sunset.py): Fetches sunrise/sunset times from sunrise-sunset.org for Berlin coordinates and returns whether the sun has set (True/False) or `None` on error.
+- [button.py.swp](app/sensors/.button.py.swp): Editor swap/temporary file; safe to ignore or remove.
 
 ## planner/
 
-- [planner/__init__.py](planner/__init__.py): Package marker for planner utilities (empty).
-- [planner/problem_generator.py](planner/problem_generator.py): Converts the current `WorldState` into a PDDL `problem.pddl` file by collecting facts (actuator flags, temperature/air quality symbolic facts) and writing a problem text with a goal that typically expresses safe/neutral system state.
-- [planner/domain.pddl](planner/domain.pddl): The PDDL domain model describing predicates (e.g., `fan_on`, `temperature_hot`) and actions the planner can use. The planner uses this together with the generated `problem.pddl` to produce a plan.
+- [__init__.py](planner/__init__.py): Package marker for planner utilities (empty).
+- [problem_generator.py](planner/problem_generator.py): Converts the current `WorldState` into a PDDL `problem.pddl` file by collecting facts (actuator flags, temperature/air quality symbolic facts) and writing a problem text with a goal that typically expresses safe/neutral system state.
+- [domain.pddl](planner/domain.pddl): The PDDL domain model describing predicates (e.g., `fan_on`, `temperature_hot`) and actions the planner can use. The planner uses this together with the generated `problem.pddl` to produce a plan.
 
 ## zwave-stack/
 
@@ -92,10 +86,3 @@ This file lists repository files and explains their purpose. Use this as a quick
 - `fast-downward/` (ignored in git): Expected location for the Fast Downward planner; `planner_bridge` runs `./fast-downward.py` in this directory. If you want to use Fast Downward, place the planner there or adjust `planner_bridge.py`.
 - `planner/problem.pddl` (generated): The problem file produced at runtime by `planner/problem_generator.py` — ignored by `.gitignore`.
 
----
-
-If you want, I can:
-- add cross-references inside each source file as short docstrings, or
-- generate a `requirements.txt` inferred from imports and add a quick `scripts/start.sh` runner.
-
-This file was created automatically to document the repository. Last updated: 2026-07-19
