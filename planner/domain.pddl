@@ -1,4 +1,4 @@
-(define (domain heating-cooling)
+(define (domain cargo-truck)
 
     (:requirements
         :strips
@@ -9,6 +9,8 @@
     (:predicates
         (fan_on)
         (heater_on)
+	(obstacle_near)
+        (buzzer_on)
 
         (temperature_hot)
         (temperature_ok)
@@ -126,6 +128,21 @@
 
         :effect
             (not (heater_on))
+    )
+
+    ; -------------------------
+    ; Ultrasonic-sensor
+    ; -------------------------
+    
+    (:action turn_buzzer_on
+        :precondition
+            (and
+                (obstacle_near)
+                (not (buzzer_on))
+            )
+
+        :effect
+            (buzzer_on)
     )
 
 )
