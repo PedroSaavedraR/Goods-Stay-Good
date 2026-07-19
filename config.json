@@ -1,0 +1,13 @@
+{
+    "temperature": {
+        "cold_limit": 27.5,
+        "hot_limit": 50
+    },
+    "humidity": {
+        "low_limit": 20,
+        "high_limit": 23
+    },
+    "ultrasonic": {
+    "threshold_cm": 5
+    }
+}
