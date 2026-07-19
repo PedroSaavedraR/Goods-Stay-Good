@@ -145,5 +145,16 @@
             (buzzer_on)
     )
 
+    (:action turn_buzzer_off
+        :precondition
+            (and
+                (not (obstacle_near))
+                (buzzer_on)
+            )
+
+        :effect
+            (not (buzzer_on))
+    )
+
 )
 
