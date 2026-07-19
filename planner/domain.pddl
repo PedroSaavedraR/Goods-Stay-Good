@@ -10,6 +10,9 @@
         (fan_on)
         (heater_on)
 
+        (fan_needed_by_temperature)
+        (fan_needed_by_air)
+
         (temperature_hot)
         (temperature_ok)
         (temperature_cold)
@@ -96,15 +99,15 @@
             (not (buzzer_on))
     )
 
-
     ; -------------------------
     ; Fan control
     ; -------------------------
 
     (:action turn_fan_on_temperature
+
         :precondition
             (and
-                (temperature_hot)
+                (fan_needed_by_temperature)
                 (not (fan_on))
             )
 
@@ -114,9 +117,10 @@
 
 
     (:action turn_fan_on_air
+
         :precondition
             (and
-                (bad_air)
+                (fan_needed_by_air)
                 (not (fan_on))
             )
 
@@ -126,37 +130,37 @@
 
 
     (:action cool_down
+
         :precondition
             (and
-                (temperature_hot)
+                (fan_needed_by_temperature)
                 (fan_on)
             )
 
         :effect
-            (and
-                (temperature_ok)
-                (not (temperature_hot))
-            )
+            (not (fan_needed_by_temperature))
     )
 
 
     (:action clean_air
+
         :precondition
             (and
-                (bad_air)
+                (fan_needed_by_air)
                 (fan_on)
             )
 
         :effect
-            (not (bad_air))
+            (not (fan_needed_by_air))
     )
 
 
     (:action turn_fan_off
+
         :precondition
             (and
-                (temperature_ok)
-                (not (bad_air))
+                (not (fan_needed_by_temperature))
+                (not (fan_needed_by_air))
                 (fan_on)
             )
 

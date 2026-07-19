@@ -29,6 +29,11 @@ class WorldState:
         self.outside_bright_enough = True
         self.rear_clear = True
 
+        # Derived needs
+        self.fan_needed_by_temperature = False
+        self.fan_needed_by_air = False
+
+
     def _load_config(self):
 
         path = Path(__file__).parent / "config.json"
@@ -81,6 +86,13 @@ class WorldState:
         else:
             self.rear_clear = False
 
+        # Fan requirements
+        self.fan_needed_by_temperature = (
+            self.temperature == Temperature.HOT
+        )
+        self.fan_needed_by_air = (
+            self.air_quality == AirQuality.BAD
+        )
 
 
     # Those functions are called from the app/executor.py
