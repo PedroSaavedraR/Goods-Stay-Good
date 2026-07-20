@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
-from datetime import datetime
-
+from datetime import datetime, timezone
 
 PIN = 17
 
@@ -30,7 +29,7 @@ def update():
         last_state == GPIO.HIGH
         and current == GPIO.LOW
     ):
-        last_pressed = datetime.now()
+        last_pressed = datetime.utcnow()
 
         print(
             "Cargo button pressed:",
